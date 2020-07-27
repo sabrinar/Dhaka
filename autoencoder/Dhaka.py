@@ -33,15 +33,16 @@ from mpl_toolkits.mplot3d import Axes3D
 import operator
 
 
+
 def my_except_hook(exctype, value, traceback):
         print('There has been an error in the system')
 sys.excepthook = my_except_hook
 
-def main(input_datafile='oligo_malignant.txt',latent_dim=3,
+def Dhaka(input_datafile='oligo_malignant.txt',latent_dim=3,
          N_starts=5,batch_size=100,learning_rate=.0001, epochs = 5,
-         clip_norm=2,output_datafile='output',to_cluster= 1,n_genes=5000,
-         gene_selection=0,selection_criteria='average',to_plot=1,verbose=0,
-         relative_expression=0):
+         clip_norm=2,output_datafile='output',to_cluster= 0,n_genes=5000,
+         gene_selection=0,selection_criteria='average',to_plot=1,verbose=True,
+         relative_expression=0, activation='sigmoid'):
     
     
     # read datafile
@@ -133,6 +134,7 @@ def main(input_datafile='oligo_malignant.txt',latent_dim=3,
     
     if relative_expression:
         y=np.mean(x_t,axis=1)
+        print(y.shape)
         if gene_selection:
             x_t=x_t-np.tile(y,(n_genes,1)).transpose()
         else:
@@ -207,7 +209,7 @@ def main(input_datafile='oligo_malignant.txt',latent_dim=3,
         decoder_h = Dense(intermediate_dim, activation='relu')
         decoder_d = Dense(intermediate_deep_dim2, activation ='relu')
         decoder_e = Dense(intermediate_deep_dim, activation = 'relu')
-        decoder_mean = Dense(original_dim, activation='sigmoid')
+        decoder_mean = Dense(original_dim, activation=activation)
         h_decoded = decoder_h(z)
         d_decoded = decoder_d(h_decoded)
         e_decoded = decoder_e(d_decoded)
